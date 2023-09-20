@@ -1,25 +1,34 @@
 package com.example.pastebin.entity;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
-import lombok.Getter;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
+
+import java.io.Serial;
 
 @Entity
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Getter
 @Table(name = "pastes")
+@ToString
 public class Paste {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
+
     @Column(nullable = false)
     String text;
+
     @Column(nullable = false, unique = true)
     String hash;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     User user;
+
+    public Paste(String text, String hash) {
+        this.text = text;
+        this.hash = hash;
+    }
 }
