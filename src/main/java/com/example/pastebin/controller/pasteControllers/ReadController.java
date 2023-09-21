@@ -1,4 +1,4 @@
-package com.example.pastebin.controller;
+package com.example.pastebin.controller.pasteControllers;
 
 import com.example.pastebin.dtos.PingPongDTO;
 import org.springframework.http.ResponseEntity;
