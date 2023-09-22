@@ -7,6 +7,8 @@ import lombok.*;
 @Setter
 @ToString
 public class PasteDTO {
+    int id;
     String text;
     String hash;
+    UserDTO user;
 }

@@ -10,6 +10,7 @@ import java.io.Serial;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Getter
+@Setter
 @Table(name = "pastes")
 @ToString
 public class Paste {

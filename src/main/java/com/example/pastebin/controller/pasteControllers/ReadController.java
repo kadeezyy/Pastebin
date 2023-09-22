@@ -1,8 +1,11 @@
 package com.example.pastebin.controller.pasteControllers;
 
+import com.example.pastebin.dtos.PasteDTO;
 import com.example.pastebin.dtos.PingPongDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController("/")
 public class ReadController {
@@ -18,4 +21,8 @@ public class ReadController {
         return ResponseEntity.ok("Got paste");
     }
 
+    @GetMapping("/v1/paste/getAll")
+    public ResponseEntity<List<PasteDTO>> getUsersAllPastes() {
+        return null;
+    }
 }
