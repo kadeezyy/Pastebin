@@ -12,15 +12,18 @@ import com.example.pastebin.repositories.PasteRepository;
 import com.example.pastebin.repositories.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
+@Slf4j
 @FieldDefaults(makeFinal = true)
 @Transactional
 public class PasteService {
+
     PasteRepository pasteRepository;
     PasteConverter converter;
     UserRepository userRepository;
@@ -45,6 +48,7 @@ public class PasteService {
         Paste paste = converter.pasteDtoToEntity(pasteDTO);
         user.ifPresent(paste::setUser);
         paste = pasteRepository.save(paste);
+        log.info("Saved paste {}", paste);
         return converter.pasteEntityToDto(paste);
     }
 
@@ -72,6 +76,8 @@ public class PasteService {
 
         // Save the updated Paste entity
         pasteRepository.save(existingPaste);
+
+        log.info("Updated paste {}", existingPaste);
 
         // Convert the updated Paste entity to DTO and return it
         return converter.pasteEntityToDto(existingPaste);
