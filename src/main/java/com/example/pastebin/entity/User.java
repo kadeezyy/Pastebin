@@ -2,23 +2,27 @@ package com.example.pastebin.entity;
 
 import com.example.pastebin.enums.Roles;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @NoArgsConstructor
 @Table(name = "users")
 @Getter
 @Setter
+@AllArgsConstructor
+@Builder
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
+
     @Column(nullable = false)
     String username;
+
     @Enumerated(EnumType.STRING)
-    Roles role;
+    @Builder.Default
+    Roles role = Roles.Regular;
+
     @Column(nullable = false)
     String password;
 

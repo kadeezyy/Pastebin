@@ -1,6 +1,8 @@
 package com.example.pastebin.controller.userControllers;
 
 import com.example.pastebin.dtos.UserDTO;
+import com.example.pastebin.packet.IResponse;
+import com.example.pastebin.packet.MessageResponse;
 import com.example.pastebin.service.userServices.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,8 +20,8 @@ public class UserController {
     }
 
     @PostMapping("/v1/user/add")
-    public ResponseEntity<UserDTO> adduserToDatabase(@RequestBody UserDTO userDTO) {
+    public ResponseEntity<IResponse> adduserToDatabase(@RequestBody UserDTO userDTO) {
         var resultUser = userService.saveUser(userDTO);
-        return ResponseEntity.ok(resultUser);
+        return ResponseEntity.ok(new MessageResponse(resultUser.toString()));
     }
 }

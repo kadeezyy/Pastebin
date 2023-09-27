@@ -2,22 +2,24 @@ package com.example.pastebin.service.pasteServices;
 
 import com.example.pastebin.converters.PasteConverter;
 import com.example.pastebin.dtos.PasteDTO;
+import com.example.pastebin.dtos.UserDTO;
 import com.example.pastebin.entity.Paste;
 import com.example.pastebin.entity.User;
 import com.example.pastebin.exceptions.pasteExceptions.AbsencePasteException;
 import com.example.pastebin.exceptions.pasteExceptions.EmptyFieldsException;
+import com.example.pastebin.exceptions.userExceptions.AbsenceUserException;
 import com.example.pastebin.repositories.PasteRepository;
 import com.example.pastebin.repositories.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
 @FieldDefaults(makeFinal = true)
+@Transactional
 public class PasteService {
     PasteRepository pasteRepository;
     PasteConverter converter;
@@ -30,13 +32,20 @@ public class PasteService {
         this.userRepository = userRepository;
     }
 
-    @Transactional
     public PasteDTO savePaste(PasteDTO pasteDTO) {
         if (!validatePaste(pasteDTO)) {
             throw new EmptyFieldsException("Paste doesn't contain not-null fields Text and Hash");
         }
-        Paste savedPaste = pasteRepository.save(converter.pasteDtoToEntity(pasteDTO));
-        return converter.pasteEntityToDto(savedPaste);
+        Optional<User> user;
+        if (pasteDTO.getUser() != null) {
+            user = userRepository.findUserById(pasteDTO.getUser().getId());
+        } else {
+            throw new AbsenceUserException("You must also provide user credentials");
+        }
+        Paste paste = converter.pasteDtoToEntity(pasteDTO);
+        user.ifPresent(paste::setUser);
+        paste = pasteRepository.save(paste);
+        return converter.pasteEntityToDto(paste);
     }
 
     public PasteDTO updatePaste(PasteDTO updatePasteDto, int id) throws AbsencePasteException {
@@ -60,6 +69,7 @@ public class PasteService {
         }
         user.ifPresent(existingPaste::setUser);
 
+
         // Save the updated Paste entity
         pasteRepository.save(existingPaste);
 
@@ -67,7 +77,7 @@ public class PasteService {
         return converter.pasteEntityToDto(existingPaste);
     }
 
-    private boolean validatePaste(PasteDTO paste) throws DataIntegrityViolationException {
+    private boolean validatePaste(PasteDTO paste) {
         return paste.getText() != null && paste.getHash() != null;
     }
 }
