@@ -5,9 +5,11 @@ import com.example.pastebin.dtos.UserDTO;
 import com.example.pastebin.entity.User;
 import com.example.pastebin.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -16,21 +18,35 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class UserServiceImpl implements UserDetailsService, UserService {
+public class UserServiceImpl {
 
     UserRepository userRepository;
     PasswordEncoder passwordEncoder;
     UserConverter userConverter;
+    AuthenticationManager authenticationManager;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, UserConverter userConverter) {
+    public UserServiceImpl(UserRepository userRepository, UserConverter userConverter, AuthenticationManager authenticationManager) {
         this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
         this.userConverter = userConverter;
+        this.passwordEncoder = new BCryptPasswordEncoder();
+        this.authenticationManager = authenticationManager;
     }
 
+//    @Override
+//    public UserDTO loadUserByUsername(String username) throws UsernameNotFoundException {
+//        Optional<User> userOptional = userRepository.findUserByUsername(username);
+//        if (userOptional.isEmpty()) {
+//            throw new UsernameNotFoundException("User not found");
+//        }
+//        User user = userOptional.get();
+//        return UserDTO.builder()
+//                .username(user.getUsername())
+//                .password(user.getPassword())
+//                .role(user.getRole())
+//                .build();
+//    }
 
-    @Override
     public UserDTO saveUser(UserDTO userDTO) {
         User user = new User(
                 userDTO.getUsername(),
@@ -41,18 +57,23 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         return userConverter.userEntityToDto(savedUser);
     }
 
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return null;
+    public UserDTO authenticateUser(UserDTO userDTO) {
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        userDTO.getUsername(),
+                        userDTO.getPassword()
+                )
+        );
+        var user = userRepository.findUserByUsername(userDTO.getUsername())
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        return userConverter.userEntityToDto(user);
     }
 
-    @Override
     public UserDTO findUserById(int id) {
         Optional<User> user = userRepository.findUserById(id);
         return user.map(value -> userConverter.userEntityToDto(value)).orElse(null);
     }
 
-    @Override
     public List<UserDTO> findAllUsersByUsername(String name) {
         var users = userRepository.findAllUsersByUsername(name);
         if (users.isEmpty())
@@ -61,15 +82,5 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         for (var user : users)
             user.ifPresent(value -> resultUsers.add(userConverter.userEntityToDto(value)));
         return resultUsers;
-    }
-
-    @Override
-    public void deleteUser(UserDTO userDTO) {
-
-    }
-
-    @Override
-    public UserDTO updateUser(UserDTO userDTO) {
-        return null;
     }
 }
