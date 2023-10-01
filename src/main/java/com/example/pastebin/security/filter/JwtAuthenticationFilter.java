@@ -1,8 +1,6 @@
 package com.example.pastebin.security.filter;
 
-import com.example.pastebin.security.config.UserServiceConfig;
-import com.example.pastebin.security.jwt.JwtService;
-import com.example.pastebin.service.userServices.UserServiceImpl;
+import com.example.pastebin.service.jwt.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -33,12 +31,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         final String authHeader = request.getHeader("Authorization");
         final String jwtToken, username;
-        log.info(authHeader);
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
-        jwtToken = authHeader.split("Bearer ")[0];
+        jwtToken = authHeader.substring(7);
         username = jwtService.extractUsername(jwtToken); //todo: extract username
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = this.userService.loadUserByUsername(username);

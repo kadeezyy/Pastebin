@@ -39,14 +39,11 @@ public class PasteService {
         if (!validatePaste(pasteDTO)) {
             throw new EmptyFieldsException("Paste doesn't contain not-null fields Text and Hash");
         }
-        Optional<User> user;
-        if (pasteDTO.getUser() != null) {
-            user = userRepository.findUserById(pasteDTO.getUser().getId());
-        } else {
-            throw new AbsenceUserException("You must also provide user credentials");
-        }
+        User user = userRepository.findUserById(pasteDTO.getUser().getId()).orElseThrow(
+                () -> new AbsenceUserException("User not found")
+        ); //todo: get user from jwt token
         Paste paste = converter.pasteDtoToEntity(pasteDTO);
-        user.ifPresent(paste::setUser);
+        paste.setUser(user);
         paste = pasteRepository.save(paste);
         log.info("Saved paste {}", paste);
         return converter.pasteEntityToDto(paste);

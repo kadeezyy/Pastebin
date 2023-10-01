@@ -14,7 +14,7 @@ public class UserDTO {
     int id;
     String username;
     String password;
-    Roles role;
+    Roles role = Roles.Regular;
 
     public String toString() {
         return String.format("""

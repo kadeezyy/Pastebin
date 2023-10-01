@@ -1,7 +1,7 @@
 package com.example.pastebin.security.config;
 
 import com.example.pastebin.repositories.UserRepository;
-import com.example.pastebin.service.userServices.UserServiceImpl;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,9 +15,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class UserServiceConfig {
-    UserServiceImpl userService;
     UserRepository userRepository;
 
     @Bean

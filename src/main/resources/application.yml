@@ -1,9 +1,15 @@
 spring:
-  api-secret-key: my-secret-key
+  security:
+    jwt:
+      api-secret-key: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+      expiration-time: 604800000 # a week
+      refresh-token:
+        expiration-time: 2419200000 # a month
+
   datasource:
     url: jdbc:postgresql://localhost:5432/pastebin
-    username:
-    password:
+    username: kanat
+    password: 31p6hd19
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:

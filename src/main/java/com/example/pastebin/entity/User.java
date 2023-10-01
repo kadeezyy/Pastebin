@@ -13,8 +13,7 @@ import java.util.List;
 @Entity
 @NoArgsConstructor
 @Table(name = "users")
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 @Builder
 public class User implements UserDetails {
@@ -22,21 +21,15 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     String username;
 
     @Enumerated(EnumType.STRING)
-    @Builder.Default
     Roles role = Roles.Regular;
 
     @Column(nullable = false)
     String password;
 
-    public User(String username, String password, Roles role) {
-        this.username = username;
-        this.password = password;
-        this.role = role;
-    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
