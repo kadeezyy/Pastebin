@@ -1,6 +1,4 @@
 package com.example.pastebin.packet;
 
-import java.io.Serializable;
-
-public record MessageResponse(String message) implements IResponse {
+public record MessageResponse(String response) implements IResponse {
 }

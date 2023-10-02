@@ -15,7 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-@RestController
+@RestController("/v1/paste")
 @Slf4j
 public class WriteController {
     PasteWriteService pasteWriteService;
@@ -24,7 +24,7 @@ public class WriteController {
         this.pasteWriteService = pasteWriteService;
     }
 
-    @PostMapping("/v1/paste/add")
+    @PostMapping("/add")
     public ResponseEntity<IResponse> writePaste(
             @RequestBody PasteDto paste,
             @AuthenticationPrincipal User user
@@ -38,7 +38,7 @@ public class WriteController {
         }
     }
 
-    @PutMapping("/v1/paste/update/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<IResponse> updatePaste(
             @RequestBody PasteDto updatePasteDto,
             @PathVariable int id,
