@@ -2,11 +2,13 @@ package com.example.pastebin.dtos;
 
 import lombok.*;
 
+import java.io.Serializable;
+
 @NoArgsConstructor
-@Data
 @AllArgsConstructor
+@Data
 @Builder
-public class PasteDto {
+public class PasteDto implements Serializable{
     int id;
     String text;
     String hash;

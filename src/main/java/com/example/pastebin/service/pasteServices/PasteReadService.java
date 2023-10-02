@@ -10,6 +10,7 @@ import jakarta.transaction.Transactional;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,6 +29,7 @@ public class PasteReadService {
         this.converter = converter;
     }
 
+    @Cacheable(value = "PasteDto", key = "#id")
     public PasteDto getPasteById(int id) {
         var pasteOptional = pasteRepository.findById(id);
         if (pasteOptional.isEmpty())

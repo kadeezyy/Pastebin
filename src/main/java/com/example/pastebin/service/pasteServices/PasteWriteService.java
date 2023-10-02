@@ -11,6 +11,7 @@ import jakarta.transaction.Transactional;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -28,6 +29,7 @@ public class PasteWriteService {
         this.converter = converter;
     }
 
+
     public PasteDto savePaste(PasteDto pasteDTO, User user) {
         if (!validatePaste(pasteDTO)) {
             throw new EmptyFieldsException("Paste doesn't contain not-null fields Text and Hash");
@@ -39,6 +41,7 @@ public class PasteWriteService {
         return converter.pasteEntityToDto(paste);
     }
 
+    @CachePut(value = "Paste", key = "#id")
     public PasteDto updatePaste(PasteDto updatePasteDto, int id, User user) throws AbsencePasteException {
         var existingPasteOptional = pasteRepository.findPasteByHash(updatePasteDto.getHash());
 //        var existingPasteOptional = pasteRepository.findById(id);

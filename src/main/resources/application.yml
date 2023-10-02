@@ -20,3 +20,8 @@ spring:
         format_sql: true
     database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQLDialect
+  cache:
+    type: redis
+    redis:
+      cache-null-values: true
+      #time-to-live: 40000

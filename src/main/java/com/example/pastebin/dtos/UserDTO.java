@@ -4,13 +4,14 @@ import com.example.pastebin.enums.Roles;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.io.Serializable;
+
 @NoArgsConstructor
-@Getter
-@Setter
+@Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @AllArgsConstructor
 @Builder
-public class UserDTO {
+public class UserDTO implements Serializable {
     int id;
     String username;
     @Builder.Default
@@ -19,7 +20,8 @@ public class UserDTO {
 
     public String toString() {
         return String.format("""
-                id: %d, username: %s, role: %s""",
+                            id: %d, username: %s, role: %s
+                        """,
                 id, username, role);
     }
 }
