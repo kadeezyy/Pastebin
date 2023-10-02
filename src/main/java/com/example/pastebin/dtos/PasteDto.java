@@ -3,9 +3,10 @@ package com.example.pastebin.dtos;
 import lombok.*;
 
 @NoArgsConstructor
-@Getter
-@Setter
-public class PasteDTO {
+@Data
+@AllArgsConstructor
+@Builder
+public class PasteDto {
     int id;
     String text;
     String hash;

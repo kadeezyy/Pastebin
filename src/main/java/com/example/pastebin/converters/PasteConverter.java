@@ -1,35 +1,31 @@
 package com.example.pastebin.converters;
 
-import com.example.pastebin.dtos.PasteDTO;
+import com.example.pastebin.dtos.PasteDto;
 import com.example.pastebin.dtos.UserDTO;
 import com.example.pastebin.entity.Paste;
-import com.example.pastebin.entity.User;
 import org.springframework.stereotype.Component;
 
 @Component
 public class PasteConverter {
-    public Paste pasteDtoToEntity(PasteDTO pasteDTO) {
-        var paste = new Paste(pasteDTO.getText(), pasteDTO.getHash());
-        paste.setId(pasteDTO.getId());
-        paste.setUser(new User(pasteDTO.getId(),
-                pasteDTO.getUser().getUsername(),
-                pasteDTO.getUser().getRole(),
-                pasteDTO.getUser().getPassword()));
-        return paste;
+    public Paste pasteDtoToEntity(PasteDto pasteDTO) {
+        return Paste.builder()
+                .id(pasteDTO.getId())
+                .hash(pasteDTO.getHash())
+                .text(pasteDTO.getText())
+                .build();
     }
 
-    public PasteDTO pasteEntityToDto(Paste paste) {
-
-        //toDo: Add users and other fields to service and converter
-        PasteDTO dto = new PasteDTO();
-        dto.setHash(paste.getHash());
-        dto.setText(paste.getText());
-
-
-        dto.setUser(new UserDTO(paste.getId(),
-                paste.getUser().getUsername(),
-                paste.getUser().getPassword(),
-                paste.getUser().getRole()));
-        return dto;
+    public PasteDto pasteEntityToDto(Paste paste) {
+        var user = paste.getUser();
+        return PasteDto.builder()
+                .id(paste.getId())
+                .text(paste.getText())
+                .hash(paste.getHash())
+                .user(UserDTO.builder()
+                        .username(user.getUsername())
+                        .role(user.getRole())
+                        .id(user.getId())
+                        .build()
+                ).build();
     }
 }

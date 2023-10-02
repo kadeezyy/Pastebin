@@ -9,10 +9,10 @@ import java.io.Serial;
 @Entity
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Getter
-@Setter
+@Data
 @Table(name = "pastes")
-@ToString
+@AllArgsConstructor
+@Builder
 public class Paste {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

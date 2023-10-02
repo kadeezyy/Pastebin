@@ -1,47 +1,37 @@
 package com.example.pastebin.service.pasteServices;
 
 import com.example.pastebin.converters.PasteConverter;
-import com.example.pastebin.dtos.PasteDTO;
-import com.example.pastebin.dtos.UserDTO;
+import com.example.pastebin.dtos.PasteDto;
 import com.example.pastebin.entity.Paste;
 import com.example.pastebin.entity.User;
 import com.example.pastebin.exceptions.pasteExceptions.AbsencePasteException;
 import com.example.pastebin.exceptions.pasteExceptions.EmptyFieldsException;
-import com.example.pastebin.exceptions.userExceptions.AbsenceUserException;
 import com.example.pastebin.repositories.PasteRepository;
-import com.example.pastebin.repositories.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @Service
 @Slf4j
 @FieldDefaults(makeFinal = true)
 @Transactional
-public class PasteService {
+public class PasteWriteService {
 
     PasteRepository pasteRepository;
     PasteConverter converter;
-    UserRepository userRepository;
 
     @Autowired
-    public PasteService(PasteRepository pasteRepository, PasteConverter converter, UserRepository userRepository) {
+    public PasteWriteService(PasteRepository pasteRepository, PasteConverter converter) {
         this.pasteRepository = pasteRepository;
         this.converter = converter;
-        this.userRepository = userRepository;
     }
 
-    public PasteDTO savePaste(PasteDTO pasteDTO) {
+    public PasteDto savePaste(PasteDto pasteDTO, User user) {
         if (!validatePaste(pasteDTO)) {
             throw new EmptyFieldsException("Paste doesn't contain not-null fields Text and Hash");
         }
-        User user = userRepository.findUserById(pasteDTO.getUser().getId()).orElseThrow(
-                () -> new AbsenceUserException("User not found")
-        ); //todo: get user from jwt token
         Paste paste = converter.pasteDtoToEntity(pasteDTO);
         paste.setUser(user);
         paste = pasteRepository.save(paste);
@@ -49,8 +39,9 @@ public class PasteService {
         return converter.pasteEntityToDto(paste);
     }
 
-    public PasteDTO updatePaste(PasteDTO updatePasteDto, int id) throws AbsencePasteException {
-        var existingPasteOptional = pasteRepository.findById(id);
+    public PasteDto updatePaste(PasteDto updatePasteDto, int id, User user) throws AbsencePasteException {
+        var existingPasteOptional = pasteRepository.findPasteByHash(updatePasteDto.getHash());
+//        var existingPasteOptional = pasteRepository.findById(id);
         if (existingPasteOptional.isEmpty()) {
             throw new AbsencePasteException("There is no paste with provided id: " + id);
         }
@@ -61,26 +52,19 @@ public class PasteService {
         var existingPaste = existingPasteOptional.get();
         existingPaste.setText(updatePasteDto.getText());
         existingPaste.setHash(updatePasteDto.getHash());
-        Optional<User> user;
-        if (existingPaste.getUser() != null) {
-            user = userRepository.findUserById(existingPaste.getUser().getId());
-        } else {
-            user = userRepository.findUserById(updatePasteDto.getUser().getId());
-            System.out.println(user);
-        }
-        user.ifPresent(existingPaste::setUser);
+        existingPaste.setUser(user);
 
 
         // Save the updated Paste entity
-        pasteRepository.save(existingPaste);
+        var savedPaste = pasteRepository.save(existingPaste);
 
-        log.info("Updated paste {}", existingPaste);
+        log.info("Updated paste {}", savedPaste);
 
         // Convert the updated Paste entity to DTO and return it
-        return converter.pasteEntityToDto(existingPaste);
+        return converter.pasteEntityToDto(savedPaste);
     }
 
-    private boolean validatePaste(PasteDTO paste) {
+    private boolean validatePaste(PasteDto paste) {
         return paste.getText() != null && paste.getHash() != null;
     }
 }

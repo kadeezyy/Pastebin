@@ -18,7 +18,7 @@ public class UserDTO {
 
     public String toString() {
         return String.format("""
-                id: %d, username: %s, password: %s, role: %s""",
-                id, username, password, role);
+                id: %d, username: %s, role: %s""",
+                id, username, role);
     }
 }
