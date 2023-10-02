@@ -13,7 +13,8 @@ import lombok.experimental.FieldDefaults;
 public class UserDTO {
     int id;
     String username;
-    String password;
+    @Builder.Default
+    String password = "hidden";
     Roles role = Roles.Regular;
 
     public String toString() {
