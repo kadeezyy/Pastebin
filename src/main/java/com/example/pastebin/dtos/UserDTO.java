@@ -20,7 +20,7 @@ public class UserDTO implements Serializable {
 
     public String toString() {
         return String.format("""
-                            id: %d, username: %s, role: %s
+                        id: %d, username: %s, role: %s
                         """,
                 id, username, role);
     }

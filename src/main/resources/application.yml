@@ -1,7 +1,7 @@
 spring:
   security:
     jwt:
-      api-secret-key: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+      api-secret-key: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970 #256 bytes
       expiration-time: 604800000 # a week
       refresh-token:
         expiration-time: 2419200000 # a month
@@ -11,6 +11,7 @@ spring:
     username: kanat
     password: 31p6hd19
     driver-class-name: org.postgresql.Driver
+
   jpa:
     hibernate:
       ddl-auto: update
@@ -20,6 +21,7 @@ spring:
         format_sql: true
     database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQLDialect
+
   cache:
     type: redis
     redis:

@@ -4,7 +4,7 @@ import com.example.pastebin.converters.PasteConverter;
 import com.example.pastebin.dtos.PasteDto;
 import com.example.pastebin.entity.Paste;
 import com.example.pastebin.entity.User;
-import com.example.pastebin.exceptions.pasteExceptions.AbsencePasteException;
+import com.example.pastebin.exceptions.pasteExceptions.PasteNotFoundException;
 import com.example.pastebin.repositories.PasteRepository;
 import jakarta.transaction.Transactional;
 import lombok.experimental.FieldDefaults;
@@ -19,12 +19,12 @@ import java.util.List;
 @Slf4j
 @FieldDefaults(makeFinal = true)
 @Transactional
-public class PasteReadService {
+public class ReadService {
     PasteRepository pasteRepository;
     PasteConverter converter;
 
     @Autowired
-    public PasteReadService(PasteRepository pasteRepository, PasteConverter converter) {
+    public ReadService(PasteRepository pasteRepository, PasteConverter converter) {
         this.pasteRepository = pasteRepository;
         this.converter = converter;
     }
@@ -33,7 +33,7 @@ public class PasteReadService {
     public PasteDto getPasteById(int id) {
         var pasteOptional = pasteRepository.findById(id);
         if (pasteOptional.isEmpty())
-            throw new AbsencePasteException("There is no paste with provided id: " + id);
+            throw new PasteNotFoundException("There is no paste with provided id: " + id);
         return converter.pasteEntityToDto(pasteOptional.get());
     }
 

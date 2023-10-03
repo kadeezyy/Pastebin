@@ -8,7 +8,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Data
 @Builder
-public class PasteDto implements Serializable{
+public class PasteDto implements Serializable {
     int id;
     String text;
     String hash;
@@ -16,7 +16,8 @@ public class PasteDto implements Serializable{
 
     public String toString() {
         return String.format("""
-                id: %d, text: %s, hash: %s, user: %s""",
+                        id: %d, text: %s, hash: %s, user: %s
+                        """,
                 id, text, hash, user);
     }
 }

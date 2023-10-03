@@ -4,7 +4,7 @@ import com.example.pastebin.converters.PasteConverter;
 import com.example.pastebin.dtos.PasteDto;
 import com.example.pastebin.entity.Paste;
 import com.example.pastebin.entity.User;
-import com.example.pastebin.exceptions.pasteExceptions.AbsencePasteException;
+import com.example.pastebin.exceptions.pasteExceptions.PasteNotFoundException;
 import com.example.pastebin.exceptions.pasteExceptions.EmptyFieldsException;
 import com.example.pastebin.repositories.PasteRepository;
 import jakarta.transaction.Transactional;
@@ -18,22 +18,22 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @FieldDefaults(makeFinal = true)
 @Transactional
-public class PasteWriteService {
+public class WriteService {
 
     PasteRepository pasteRepository;
     PasteConverter converter;
 
     @Autowired
-    public PasteWriteService(PasteRepository pasteRepository, PasteConverter converter) {
+    public WriteService(PasteRepository pasteRepository, PasteConverter converter) {
         this.pasteRepository = pasteRepository;
         this.converter = converter;
     }
 
 
     public PasteDto savePaste(PasteDto pasteDTO, User user) {
-        if (!validatePaste(pasteDTO)) {
+        if (!validatePaste(pasteDTO))
             throw new EmptyFieldsException("Paste doesn't contain not-null fields Text and Hash");
-        }
+
         Paste paste = converter.pasteDtoToEntity(pasteDTO);
         paste.setUser(user);
         paste = pasteRepository.save(paste);
@@ -42,21 +42,20 @@ public class PasteWriteService {
     }
 
     @CachePut(value = "Paste", key = "#id")
-    public PasteDto updatePaste(PasteDto updatePasteDto, int id, User user) throws AbsencePasteException {
+    public PasteDto updatePaste(PasteDto updatePasteDto, int id, User user) throws PasteNotFoundException {
         var existingPasteOptional = pasteRepository.findPasteByHash(updatePasteDto.getHash());
 //        var existingPasteOptional = pasteRepository.findById(id);
-        if (existingPasteOptional.isEmpty()) {
-            throw new AbsencePasteException("There is no paste with provided id: " + id);
-        }
-        if (!validatePaste(updatePasteDto)) {
+        if (existingPasteOptional.isEmpty())
+            throw new PasteNotFoundException("There is no paste with provided id: " + id);
+
+        if (!validatePaste(updatePasteDto))
             throw new EmptyFieldsException("Paste doesn't contain not-null fields Text and Hash");
-        }
+
 
         var existingPaste = existingPasteOptional.get();
         existingPaste.setText(updatePasteDto.getText());
         existingPaste.setHash(updatePasteDto.getHash());
         existingPaste.setUser(user);
-
 
         // Save the updated Paste entity
         var savedPaste = pasteRepository.save(existingPaste);
@@ -68,6 +67,9 @@ public class PasteWriteService {
     }
 
     private boolean validatePaste(PasteDto paste) {
-        return paste.getText() != null && paste.getHash() != null;
+        return paste.getText() != null &&
+                !paste.getText().isEmpty() &&
+                paste.getHash() != null &&
+                !paste.getHash().isEmpty();
     }
 }
