@@ -1,5 +1,6 @@
 package com.example.pastebin.service.pasteServices;
 
+import com.example.pastebin.aop.aspect.Logged;
 import com.example.pastebin.converters.PasteConverter;
 import com.example.pastebin.dtos.PasteDto;
 import com.example.pastebin.entity.Paste;
@@ -8,7 +9,6 @@ import com.example.pastebin.exceptions.pasteExceptions.PasteNotFoundException;
 import com.example.pastebin.repositories.PasteRepository;
 import jakarta.transaction.Transactional;
 import lombok.experimental.FieldDefaults;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-@Slf4j
 @FieldDefaults(makeFinal = true)
 @Transactional
 public class ReadService {
@@ -30,13 +29,15 @@ public class ReadService {
     }
 
     @Cacheable(value = "PasteDto", key = "#id")
-    public PasteDto getPasteById(int id) {
+    @Logged
+    public PasteDto getPasteById(int id) throws PasteNotFoundException{
         var pasteOptional = pasteRepository.findById(id);
         if (pasteOptional.isEmpty())
             throw new PasteNotFoundException("There is no paste with provided id: " + id);
         return converter.pasteEntityToDto(pasteOptional.get());
     }
 
+    @Logged
     public List<PasteDto> getAllUserPastes(User user) {
         List<Paste> pastes = pasteRepository.getPastesByUser(user.getId());
         return pastes.stream().map(converter::pasteEntityToDto).toList();

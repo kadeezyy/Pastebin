@@ -1,11 +1,13 @@
 package com.example.pastebin.service.userServices;
 
+import com.example.pastebin.aop.aspect.Logged;
 import com.example.pastebin.converters.UserConverter;
 import com.example.pastebin.dtos.JwtTokenDto;
 import com.example.pastebin.dtos.UserDTO;
 import com.example.pastebin.entity.JwtToken;
 import com.example.pastebin.entity.User;
 import com.example.pastebin.enums.TokenType;
+import com.example.pastebin.exceptions.userExceptions.NotUniqueUsernameException;
 import com.example.pastebin.repositories.JwtTokenRepository;
 import com.example.pastebin.repositories.UserRepository;
 import com.example.pastebin.service.jwt.JwtService;
@@ -13,11 +15,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
+import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -29,7 +33,6 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-@Slf4j
 @Transactional
 public class UserServiceImpl implements UserService {
 
@@ -56,15 +59,17 @@ public class UserServiceImpl implements UserService {
         this.jwtTokenRepository = jwtTokenRepository;
     }
 
-    public JwtTokenDto registerUser(UserDTO userDTO) {
+    @Logged
+    public JwtTokenDto registerUser(UserDTO userDTO) throws NotUniqueUsernameException{
         User user = User.builder()
                 .username(userDTO.getUsername())
                 .password(passwordEncoder.encode(userDTO.getPassword()))
                 .role(userDTO.getRole()).build();
-        log.info(user.toString());
+        if (userRepository.findUserByUsername(user.getUsername()).isPresent())
+            throw new NotUniqueUsernameException(user.getUsername());
+
         var savedUser = userRepository.save(user);
         var jwtToken = jwtService.generateToken(savedUser);
-        log.info(jwtToken);
         var refreshToken = jwtService.generateRefreshToken(savedUser);
         saveUserToken(user, jwtToken);
         return JwtTokenDto.builder()
@@ -72,7 +77,8 @@ public class UserServiceImpl implements UserService {
                 .refresh_token(refreshToken).build();
     }
 
-    public JwtTokenDto authenticateUser(UserDTO userDTO) {
+    @Logged
+    public JwtTokenDto authenticateUser(UserDTO userDTO) throws AuthenticationException {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         userDTO.getUsername(),
@@ -91,6 +97,7 @@ public class UserServiceImpl implements UserService {
                 .build();
     }
 
+    @Logged
     public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
         final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         final String refreshToken, username;
@@ -127,12 +134,13 @@ public class UserServiceImpl implements UserService {
         jwtTokenRepository.saveAll(validUserTokens);
     }
 
-
+    @Logged
     public UserDTO findUserById(int id) {
         Optional<User> user = userRepository.findUserById(id);
         return user.map(value -> userConverter.userEntityToDto(value)).orElse(null);
     }
 
+    @Logged
     public List<UserDTO> findAllUsersByUsername(String name) {
         var users = userRepository.findAllUsersByUsername(name);
         if (users.isEmpty())
@@ -143,6 +151,7 @@ public class UserServiceImpl implements UserService {
         return resultUsers;
     }
 
+    @Logged
     private void saveUserToken(User user, String jwtToken) {
         var token = JwtToken.builder()
                 .user(user)

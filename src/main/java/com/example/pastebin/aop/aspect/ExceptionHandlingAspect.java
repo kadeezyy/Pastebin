@@ -1,4 +1,4 @@
-package com.example.pastebin.aspect;
+package com.example.pastebin.aop.aspect;
 
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -11,11 +11,11 @@ import org.springframework.stereotype.Component;
 @Component
 @Slf4j
 public class ExceptionHandlingAspect {
-    @Pointcut(value = "@annotation(com.example.pastebin.aspect.ExceptionThrown)")
-    public void isAnnotatedWithExceptionThrown() {
+    @Pointcut(value = "@annotation(com.example.pastebin.aop.aspect.Logged)")
+    public void isAnnotatedWithLogging() {
     }
 
-    @Around("isAnnotatedWithExceptionThrown() && target(service)")
+    @Around("isAnnotatedWithLogging() && target(service)")
     public Object addExceptionHandlingAfterThrown(ProceedingJoinPoint joinPoint, Object service) throws Throwable {
         try {
             Object result = joinPoint.proceed();
@@ -24,8 +24,6 @@ public class ExceptionHandlingAspect {
         } catch (Throwable ex) {
             log.info("Got exception in class: {}, exception: {}", service, ex.getMessage());
             throw ex;
-        } finally {
-            log.info("Proceeding further");
         }
     }
 }

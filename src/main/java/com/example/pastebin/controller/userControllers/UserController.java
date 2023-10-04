@@ -1,5 +1,6 @@
 package com.example.pastebin.controller.userControllers;
 
+import com.example.pastebin.aop.aspect.Logged;
 import com.example.pastebin.dtos.UserDTO;
 import com.example.pastebin.packet.IResponse;
 import com.example.pastebin.packet.MessageResponse;

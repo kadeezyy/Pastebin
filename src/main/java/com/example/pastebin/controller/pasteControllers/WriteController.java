@@ -1,18 +1,17 @@
 package com.example.pastebin.controller.pasteControllers;
 
+import com.example.pastebin.aop.aspect.Logged;
 import com.example.pastebin.dtos.PasteDto;
 import com.example.pastebin.entity.User;
 import com.example.pastebin.packet.IResponse;
 import com.example.pastebin.packet.MessageResponse;
 import com.example.pastebin.service.pasteServices.WriteService;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/v1/paste")
-@Slf4j
 public class WriteController {
     WriteService pasteWriteService;
 

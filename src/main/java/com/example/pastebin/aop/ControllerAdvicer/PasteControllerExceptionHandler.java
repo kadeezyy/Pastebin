@@ -1,4 +1,4 @@
-package com.example.pastebin.aspect;
+package com.example.pastebin.aop.ControllerAdvicer;
 
 import com.example.pastebin.exceptions.pasteExceptions.EmptyFieldsException;
 import com.example.pastebin.exceptions.pasteExceptions.PasteNotFoundException;
@@ -6,6 +6,7 @@ import com.example.pastebin.packet.ErrorResponse;
 import com.example.pastebin.packet.IResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;

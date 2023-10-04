@@ -1,4 +1,4 @@
-package com.example.pastebin.aspect;
+package com.example.pastebin.aop.aspect;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,5 +7,5 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ExceptionThrown {
+public @interface Logged {
 }
