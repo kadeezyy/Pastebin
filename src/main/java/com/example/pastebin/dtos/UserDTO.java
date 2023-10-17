@@ -12,11 +12,13 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Builder
 public class UserDTO implements Serializable {
-    int id;
-    String username;
+    private int id;
+    private String username;
+
     @Builder.Default
-    String password = "hidden";
-    Roles role = Roles.Regular;
+    private String password = "hidden";
+
+    private Roles role = Roles.Regular;
 
     public String toString() {
         return String.format("""

@@ -6,18 +6,10 @@ import java.io.Serializable;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
 @Builder
+@Getter
 public class PasteDto implements Serializable {
-    int id;
-    String text;
-    String hash;
-    UserDTO user;
-
-    public String toString() {
-        return String.format("""
-                        id: %d, text: %s, hash: %s, user: %s
-                        """,
-                id, text, hash, user);
-    }
+    private int id;
+    private String text;
+    private String hash;
 }

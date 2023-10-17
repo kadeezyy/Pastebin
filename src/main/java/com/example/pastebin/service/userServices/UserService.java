@@ -2,7 +2,6 @@ package com.example.pastebin.service.userServices;
 
 import com.example.pastebin.dtos.JwtTokenDto;
 import com.example.pastebin.dtos.UserDTO;
-import com.example.pastebin.entity.JwtToken;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -21,5 +20,5 @@ public interface UserService {
 
     UserDTO updateUser(UserDTO userDTO);
 
-    void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException;
+    String refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException;
 }

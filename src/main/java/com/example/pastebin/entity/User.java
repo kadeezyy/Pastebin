@@ -19,16 +19,16 @@ import java.util.List;
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    int id;
+    private int id;
 
     @Column(nullable = false, unique = true)
-    String username;
+    private String username;
 
     @Enumerated(EnumType.STRING)
-    Roles role = Roles.Regular;
+    private Roles role = Roles.Regular;
 
     @Column(nullable = false)
-    String password;
+    private String password;
 
 
     @Override

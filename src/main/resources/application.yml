@@ -5,7 +5,8 @@ spring:
       expiration-time: 604800000 # a week
       refresh-token:
         expiration-time: 2419200000 # a month
-
+    hashEncoder:
+      algorithmInstance: SHA-256
   datasource:
     url: jdbc:postgresql://localhost:5432/pastebin
     username: kanat

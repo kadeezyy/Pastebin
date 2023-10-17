@@ -12,19 +12,19 @@ import lombok.*;
 public class JwtToken {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    int id;
+    private int id;
 
     @Column(unique = true)
-    String token;
+    private String token;
 
-    boolean expired;
-    boolean revoked;
+    private boolean expired;
+    private boolean revoked;
 
     @Enumerated(EnumType.STRING)
     @Builder.Default
-    TokenType type = TokenType.BEARER;
+    private TokenType type = TokenType.BEARER;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    User user;
+    private User user;
 }

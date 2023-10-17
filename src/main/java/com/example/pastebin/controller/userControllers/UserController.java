@@ -43,6 +43,6 @@ public class UserController {
             HttpServletRequest request,
             HttpServletResponse response
     ) throws IOException {
-        userService.refreshToken(request, response);
+         response.getOutputStream().write(userService.refreshToken(request, response).getBytes());
     }
 }

@@ -15,8 +15,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
-import lombok.extern.java.Log;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -34,14 +32,15 @@ import java.util.Optional;
 
 @Service
 @Transactional
+
 public class UserServiceImpl implements UserService {
 
-    UserRepository userRepository;
-    PasswordEncoder passwordEncoder;
-    UserConverter userConverter;
-    AuthenticationManager authenticationManager;
-    JwtTokenRepository jwtTokenRepository;
-    JwtService jwtService;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final UserConverter userConverter;
+    private final AuthenticationManager authenticationManager;
+    private final JwtTokenRepository jwtTokenRepository;
+    private final JwtService jwtService;
 
     @Autowired
     public UserServiceImpl(
@@ -98,11 +97,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Logged
-    public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public String refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
         final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         final String refreshToken, username;
         if (authHeader == null || !authHeader.startsWith("Bearer "))
-            return;
+            return null;
         refreshToken = authHeader.substring(7);
         username = jwtService.extractUsername(refreshToken);
         if (username != null) {
@@ -117,10 +116,10 @@ public class UserServiceImpl implements UserService {
                         .access_token(accessToken)
                         .refresh_token(refreshToken).build();
                 new ObjectMapper().writeValue(response.getOutputStream(), authenticationResponse);
+                return accessToken;
             }
-
         }
-
+        return null;
     }
 
     private void revokeAllUserTokens(User user) {

@@ -11,7 +11,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public class JwtTokenDto {
     @JsonProperty("access_token")
-    String access_token;
+    private String access_token;
     @JsonProperty("refresh_token")
-    String refresh_token;
+    private String refresh_token;
 }

@@ -2,6 +2,7 @@ package com.example.pastebin.aop.ControllerAdvicer;
 
 import com.example.pastebin.exceptions.pasteExceptions.EmptyFieldsException;
 import com.example.pastebin.exceptions.pasteExceptions.PasteNotFoundException;
+import com.example.pastebin.exceptions.userExceptions.UserDoesNotOwnPaste;
 import com.example.pastebin.packet.ErrorResponse;
 import com.example.pastebin.packet.IResponse;
 import org.springframework.http.HttpStatus;
@@ -28,6 +29,16 @@ public class PasteControllerExceptionHandler extends ResponseEntityExceptionHand
     @ExceptionHandler(EmptyFieldsException.class)
     public ResponseEntity<IResponse> handleEmptyFieldsException(
             EmptyFieldsException exception,
+            WebRequest request
+    ) {
+        System.out.println(exception.getMessage());
+        return buildErrorResponse(exception, HttpStatus.BAD_REQUEST);
+    }
+
+
+    @ExceptionHandler(UserDoesNotOwnPaste.class)
+    public ResponseEntity<IResponse> handleUserDoesNotOwnPasteException(
+            UserDoesNotOwnPaste exception,
             WebRequest request
     ) {
         System.out.println(exception.getMessage());
