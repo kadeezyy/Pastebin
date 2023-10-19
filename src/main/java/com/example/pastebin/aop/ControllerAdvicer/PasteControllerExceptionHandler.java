@@ -5,25 +5,23 @@ import com.example.pastebin.exceptions.pasteExceptions.PasteNotFoundException;
 import com.example.pastebin.exceptions.userExceptions.UserDoesNotOwnPaste;
 import com.example.pastebin.packet.ErrorResponse;
 import com.example.pastebin.packet.IResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 @ControllerAdvice
+@Slf4j
 public class PasteControllerExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(PasteNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<IResponse> handlePasteNotFoundException(
             PasteNotFoundException exception
     ) {
-        System.out.println(exception.getMessage());
-        return buildErrorResponse(exception, HttpStatus.NOT_FOUND);
+        return buildErrorResponse(exception, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(EmptyFieldsException.class)
@@ -31,7 +29,6 @@ public class PasteControllerExceptionHandler extends ResponseEntityExceptionHand
             EmptyFieldsException exception,
             WebRequest request
     ) {
-        System.out.println(exception.getMessage());
         return buildErrorResponse(exception, HttpStatus.BAD_REQUEST);
     }
 
@@ -41,7 +38,6 @@ public class PasteControllerExceptionHandler extends ResponseEntityExceptionHand
             UserDoesNotOwnPaste exception,
             WebRequest request
     ) {
-        System.out.println(exception.getMessage());
         return buildErrorResponse(exception, HttpStatus.BAD_REQUEST);
     }
 

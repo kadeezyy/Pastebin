@@ -24,13 +24,13 @@ public class HashGeneratorService {
     }
 
     @SneakyThrows
-    public String generateHash(SimplePaste paste) {
+    public String generateHash(String input) {
         var salt = createSalt();
         //Add salted bytes to digest
         messageDigest.update(salt);
 
         //Get the hash's bytes
-        byte[] bytes = messageDigest.digest(paste.getText().getBytes());
+        byte[] bytes = messageDigest.digest(input.getBytes());
 
         //Convert it to hexadecimal format to
         //get complete salted hash in hex format

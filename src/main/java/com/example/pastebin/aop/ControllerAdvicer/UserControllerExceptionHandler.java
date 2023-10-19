@@ -25,7 +25,6 @@ public class UserControllerExceptionHandler extends ResponseEntityExceptionHandl
     public ResponseEntity<IResponse> handleUsernameNotFoundException (
             UsernameNotFoundException exception
     ) {
-        System.out.println(exception.getMessage());
         return buildErrorResponse(exception, HttpStatus.BAD_REQUEST);
     }
 
@@ -33,8 +32,6 @@ public class UserControllerExceptionHandler extends ResponseEntityExceptionHandl
     public ResponseEntity<IResponse> handleAuthenticationException (
             AuthenticationException exception
     ) {
-        System.out.println(exception.getMessage());
-
         return buildErrorResponse(exception, HttpStatus.BAD_REQUEST);
     }
 

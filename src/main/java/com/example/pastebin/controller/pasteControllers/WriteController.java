@@ -3,6 +3,7 @@ package com.example.pastebin.controller.pasteControllers;
 import com.example.pastebin.aop.aspect.Logged;
 import com.example.pastebin.dtos.PasteDto;
 import com.example.pastebin.dtos.SimplePaste;
+import com.example.pastebin.entity.Paste;
 import com.example.pastebin.entity.User;
 import com.example.pastebin.service.hashGenerator.HashGeneratorService;
 import com.example.pastebin.service.pasteServices.WriteService;
@@ -11,6 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
 
 @RestController
 @RequestMapping("/v1/paste")
@@ -30,9 +32,10 @@ public class WriteController {
             @RequestBody SimplePaste paste,
             @AuthenticationPrincipal User user
     ) {
+
         var pasteDto = PasteDto.builder()
                 .text(paste.getText())
-                .hash(hashGeneratorService.generateHash(paste))
+                .hash(hashGeneratorService.generateHash(paste.getText()))
                 .build();
         var resultPaste = pasteWriteService.savePaste(pasteDto, user);
         return ResponseEntity.ok(resultPaste);
@@ -40,11 +43,14 @@ public class WriteController {
 
     @PutMapping(value = "/update/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updatePaste(
-            @RequestBody PasteDto updatePasteDto,
+            @RequestBody SimplePaste simplePaste,
             @PathVariable int id,
             @AuthenticationPrincipal User user
     ) {
-        var updatedPaste = pasteWriteService.updatePaste(updatePasteDto, id, user);
+        var pasteDto = PasteDto.builder()
+                .text(simplePaste.getText())
+                .build();
+        var updatedPaste = pasteWriteService.updatePaste(pasteDto, id, user);
         return ResponseEntity.ok(updatedPaste);
     }
 }

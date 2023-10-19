@@ -4,10 +4,10 @@ import lombok.*;
 
 import java.io.Serializable;
 
-@NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Getter
+@ToString
 public class PasteDto implements Serializable {
     private int id;
     private String text;

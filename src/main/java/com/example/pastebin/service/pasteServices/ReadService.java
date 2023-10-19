@@ -33,7 +33,7 @@ public class ReadService {
     public PasteDto getPasteById(int id) throws PasteNotFoundException{
         var pasteOptional = pasteRepository.findById(id);
         if (pasteOptional.isEmpty())
-            throw new PasteNotFoundException("There is no paste with provided id: " + id);
+            throw new PasteNotFoundException(id);
         return converter.pasteEntityToDto(pasteOptional.get());
     }
 

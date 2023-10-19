@@ -3,6 +3,7 @@ package com.example.pastebin.service.pasteServices;
 import com.example.pastebin.aop.aspect.Logged;
 import com.example.pastebin.converters.PasteConverter;
 import com.example.pastebin.dtos.PasteDto;
+import com.example.pastebin.dtos.SimplePaste;
 import com.example.pastebin.entity.Paste;
 import com.example.pastebin.entity.User;
 import com.example.pastebin.exceptions.pasteExceptions.PasteNotFoundException;
@@ -33,7 +34,6 @@ public class WriteService {
     }
 
 
-    @Logged
     public PasteDto savePaste(PasteDto pasteDTO, User user) throws EmptyFieldsException {
         if (!validatePaste(pasteDTO))
             throw new EmptyFieldsException("Paste doesn't contain not-null fields Text");
@@ -44,11 +44,10 @@ public class WriteService {
     }
 
     @CachePut(value = "Paste", key = "#id")
-    @Logged
     public PasteDto updatePaste(PasteDto updatePasteDto, int id, User user) throws PasteNotFoundException {
         var existingPasteOptional = pasteRepository.findById(id);
         if (existingPasteOptional.isEmpty())
-            throw new PasteNotFoundException("There is no paste with provided id: " + id);
+            throw new PasteNotFoundException(id);
 
         if (!validatePaste(updatePasteDto))
             throw new EmptyFieldsException("Paste doesn't contain not-null fields Text and Hash");

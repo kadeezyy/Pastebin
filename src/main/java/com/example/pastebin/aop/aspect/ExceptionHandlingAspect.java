@@ -7,6 +7,8 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
+
 @Aspect
 @Component
 @Slf4j
@@ -17,7 +19,9 @@ public class ExceptionHandlingAspect {
 
     @Around("isAnnotatedWithLogging() && target(service)")
     public Object addExceptionHandlingAfterThrown(ProceedingJoinPoint joinPoint, Object service) throws Throwable {
+        Object[] methodArgs = joinPoint.getArgs();
         try {
+            log.info("Method receiving these parameters: {}", Arrays.asList(methodArgs));
             Object result = joinPoint.proceed();
             log.info("Result returning from proceedingJoinPoint {}", result);
             return result;
