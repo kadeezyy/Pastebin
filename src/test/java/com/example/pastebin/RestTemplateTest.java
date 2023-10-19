@@ -66,8 +66,8 @@ public class RestTemplateTest {
     @WithMockUser(username = "kanat")
     public void testGetPasteHandler() throws Exception {
         mockMvc.perform(
-                get("http://localhost:8080/v1/paste/get/1")
-        ).andExpect(status().isBadRequest());
+                get("http://localhost:8080/v1/paste/get/17")
+        ).andExpect(status().isOk());
     }
 
 }

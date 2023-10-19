@@ -43,7 +43,7 @@ public class WriteService {
         return converter.pasteEntityToDto(paste);
     }
 
-    @CachePut(value = "Paste", key = "#id")
+    @CachePut(value = "PasteDto", key = "#id")
     public PasteDto updatePaste(PasteDto updatePasteDto, int id, User user) throws PasteNotFoundException {
         var existingPasteOptional = pasteRepository.findById(id);
         if (existingPasteOptional.isEmpty())

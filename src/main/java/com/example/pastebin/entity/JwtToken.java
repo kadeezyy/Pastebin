@@ -4,6 +4,8 @@ import com.example.pastebin.enums.TokenType;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.io.Serializable;
+
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor

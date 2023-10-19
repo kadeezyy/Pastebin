@@ -5,6 +5,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.io.Serial;
+import java.io.Serializable;
 
 @Entity
 @NoArgsConstructor
@@ -13,7 +14,7 @@ import java.io.Serial;
 @Table(name = "pastes")
 @AllArgsConstructor
 @Builder
-public class Paste {
+public class Paste implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;

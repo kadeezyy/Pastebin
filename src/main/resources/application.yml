@@ -27,4 +27,3 @@ spring:
     type: redis
     redis:
       cache-null-values: true
-      #time-to-live: 40000
